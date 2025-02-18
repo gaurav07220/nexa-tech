@@ -30,35 +30,57 @@ const App = () => {
     form.resetFields();
   };
 
-  const handleScheduleFinish = (values) => {
-    // Format the date from DatePicker (returns a moment object)
-    console.log(values,'values')
+ const handleScheduleFinish = (values) => {
     const formattedDate = values.date ? values.date.format('YYYY-MM-DD') : '';
-    
-    const templateParams = {
-      name: values.name,
-      email: values.email,
-      phone: values.phone || '',
-      date: formattedDate,
-      time: values.time,
-      message: values.message || '',
+
+    const adminTemplateParams = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone || '',
+        date: formattedDate,
+        time: values.time,
+        message: values.message || '',
     };
 
+    const userTemplateParams = {
+        name: values.name,
+        email: values.email,
+        date: formattedDate,
+        time: values.time,
+    };
+
+    // Send email to admin
     emailjs.send(
-      "service_hz5xksl", // Your EmailJS Service ID
-      "template_48vo9gb", // Your EmailJS Template ID
-      templateParams,
-      "TTcEtrdpZhs67ADvg" // Replace with your actual EmailJS Public Key
+        "service_hz5xksl", // Your EmailJS Service ID
+        "template_48vo9gb", // Admin template ID
+        adminTemplateParams,
+        "TTcEtrdpZhs67ADvg"
     )
-    .then((response) => {
-      messageApi.success('Your consultation is scheduled and email sent!');
-      setScheduleModalVisible(false);
-      scheduleForm.resetFields();
+    .then(() => {
+        // Send confirmation email to the user
+        emailjs.send(
+            "service_hz5xksl",
+            "template_vtz5t5i", // User template ID
+            userTemplateParams,
+            "TTcEtrdpZhs67ADvg"
+        )
+        .then(() => {
+            messageApi.success('Your consultation is scheduled, and confirmation email sent!');
+        })
+        .catch(() => {
+            messageApi.error('Failed to send confirmation email to user.');
+        });
+
+        setScheduleModalVisible(false);
+        scheduleForm.resetFields();
     })
-    .catch((error) => {
-      messageApi.error('Failed to schedule consultation. Please try again.');
+    .catch(() => {
+        messageApi.error('Failed to schedule consultation. Please try again.');
     });
-  };
+};
+
+  
+  
 
   const services = [
     {
