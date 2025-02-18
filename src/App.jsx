@@ -195,7 +195,7 @@ const App = () => {
       <header className="fixed top-0 left-0 right-0 bg-white shadow z-50">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center">
-            <img src={logWithText} alt="logo" className="h-10" />
+            <img src={logWithText} alt="logo" width='30%' />
           </div>
           <nav className="hidden md:flex space-x-8">
             <a
