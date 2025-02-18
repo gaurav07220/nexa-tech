@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: "/",  // 👈 Set this to your repo name
+  base: "/nexa-tech/",  // 👈 Set this to your repo name
 });
