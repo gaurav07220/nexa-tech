@@ -24,92 +24,97 @@ const App = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
+  
+  // New state for service details modal
+  const [selectedService, setSelectedService] = useState(null);
+  const [serviceModalVisible, setServiceModalVisible] = useState(false);
 
   const onFinish = () => {
     messageApi.success('Thank you for your message. We will contact you soon!');
     form.resetFields();
   };
 
- const handleScheduleFinish = (values) => {
+  const handleScheduleFinish = (values) => {
     const formattedDate = values.date ? values.date.format('YYYY-MM-DD') : '';
 
     const adminTemplateParams = {
-        name: values.name,
-        email: values.email,
-        phone: values.phone || '',
-        date: formattedDate,
-        time: values.time,
-        message: values.message || '',
+      name: values.name,
+      email: values.email,
+      phone: values.phone || '',
+      date: formattedDate,
+      time: values.time,
+      message: values.message || '',
     };
 
     const userTemplateParams = {
-        name: values.name,
-        email: values.email,
-        date: formattedDate,
-        time: values.time,
+      name: values.name,
+      email: values.email,
+      date: formattedDate,
+      time: values.time,
     };
 
     // Send email to admin
     emailjs.send(
-        "service_hz5xksl", // Your EmailJS Service ID
-        "template_48vo9gb", // Admin template ID
-        adminTemplateParams,
-        "TTcEtrdpZhs67ADvg"
+      "service_hz5xksl", // Your EmailJS Service ID
+      "template_48vo9gb", // Admin template ID
+      adminTemplateParams,
+      "TTcEtrdpZhs67ADvg"
     )
     .then(() => {
-        // Send confirmation email to the user
-        emailjs.send(
-            "service_hz5xksl",
-            "template_vtz5t5i", // User template ID
-            userTemplateParams,
-            "TTcEtrdpZhs67ADvg"
-        )
-        .then(() => {
-            messageApi.success('Your consultation is scheduled, and confirmation email sent!');
-        })
-        .catch(() => {
-            messageApi.error('Failed to send confirmation email to user.');
-        });
+      // Send confirmation email to the user
+      emailjs.send(
+        "service_hz5xksl",
+        "template_vtz5t5i", // User template ID
+        userTemplateParams,
+        "TTcEtrdpZhs67ADvg"
+      )
+      .then(() => {
+        messageApi.success('Your consultation is scheduled, and confirmation email sent!');
+      })
+      .catch(() => {
+        messageApi.error('Failed to send confirmation email to user.');
+      });
 
-        setScheduleModalVisible(false);
-        scheduleForm.resetFields();
+      setScheduleModalVisible(false);
+      scheduleForm.resetFields();
     })
     .catch(() => {
-        messageApi.error('Failed to schedule consultation. Please try again.');
+      messageApi.error('Failed to schedule consultation. Please try again.');
     });
-};
-
-  
-  
+  };
 
   const services = [
     {
       title: 'Web Development',
       description: 'Custom web applications built with cutting-edge technologies',
       icon: 'fas fa-code',
-      image:
-        'https://public.readdy.ai/ai/img_res/b833b7395e1a5b6f63ca34bf0ae6cde5.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/b833b7395e1a5b6f63ca34bf0ae6cde5.jpg',
+      details:
+        'Our web development service includes a detailed analysis of your business requirements and custom design using the latest technologies such as React and Node.js. We deliver scalable and robust solutions to help your business grow.'
     },
     {
       title: 'Web Design',
       description: 'Beautiful, responsive designs that engage your audience',
       icon: 'fas fa-palette',
-      image:
-        'https://public.readdy.ai/ai/img_res/26125d4f554afc018351d29154fa9788.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/26125d4f554afc018351d29154fa9788.jpg',
+      details:
+        'Our web design service focuses on creating aesthetically pleasing and user-friendly interfaces that align with your brand. We craft responsive designs that work seamlessly across all devices.'
     },
     {
       title: 'Cloud Deployment',
       description: 'Secure and scalable cloud infrastructure solutions',
       icon: 'fas fa-cloud',
-      image:
-        'https://public.readdy.ai/ai/img_res/585605d6256fd02c777bd4a7b1ac36e6.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/585605d6256fd02c777bd4a7b1ac36e6.jpg',
+      details:
+        'With our cloud deployment service, we ensure your infrastructure is secure, scalable, and cost-effective. We leverage leading platforms like AWS, Azure, and Google Cloud to deliver reliable and efficient cloud solutions.'
     },
     {
       title: 'Maintenance Service',
       description: '24/7 support and maintenance for your digital assets',
       icon: 'fas fa-tools',
-      image:
-        'https://public.readdy.ai/ai/img_res/8700861d7dbd013b410b439ab09db134.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/8700861d7dbd013b410b439ab09db134.jpg',
+      details:
+        'Our maintenance service provides continuous support to keep your systems running smoothly. From routine updates to troubleshooting, we ensure your digital assets remain secure and up-to-date.'
     }
   ];
 
@@ -118,43 +123,37 @@ const App = () => {
       name: 'E-commerce Platform',
       client: 'Global Retail Solutions',
       description: 'Full-stack e-commerce solution with advanced analytics',
-      image:
-        'https://public.readdy.ai/ai/img_res/e7525de260ddf241de6ecb2457d44965.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/e7525de260ddf241de6ecb2457d44965.jpg'
     },
     {
       name: 'Healthcare Portal',
       client: 'MediCare Systems',
       description: 'Secure patient management system',
-      image:
-        'https://public.readdy.ai/ai/img_res/ba0b3b601972f20b77b9cd3f30fb3795.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/ba0b3b601972f20b77b9cd3f30fb3795.jpg'
     },
     {
       name: 'Financial Dashboard',
       client: 'Investment Corp',
       description: 'Real-time financial data visualization platform',
-      image:
-        'https://public.readdy.ai/ai/img_res/8249c73ccdb80694b58e21b796bab02b.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/8249c73ccdb80694b58e21b796bab02b.jpg'
     },
     {
       name: 'Educational Platform',
       client: 'EduTech Solutions',
       description: 'Interactive learning management system',
-      image:
-        'https://public.readdy.ai/ai/img_res/ab3922eab145bf41934d6a6204f698e8.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/ab3922eab145bf41934d6a6204f698e8.jpg'
     },
     {
       name: 'Real Estate Portal',
       client: 'PropertyFinder',
       description: 'Property listing and management platform',
-      image:
-        'https://public.readdy.ai/ai/img_res/772c3e6668a757ea3a90bbd258bae5be.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/772c3e6668a757ea3a90bbd258bae5be.jpg'
     },
     {
       name: 'Social Network',
       client: 'ConnectHub',
       description: 'Community engagement platform',
-      image:
-        'https://public.readdy.ai/ai/img_res/1b9c9fef811dcf709f9179d3e490a222.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/1b9c9fef811dcf709f9179d3e490a222.jpg'
     }
   ];
 
@@ -165,8 +164,7 @@ const App = () => {
       content:
         'Nexa Tech transformed our digital presence completely. Their expertise in web development and cloud solutions helped us scale our operations efficiently.',
       rating: 5,
-      image:
-        'https://public.readdy.ai/ai/img_res/214a35a18c6c96c556c61f87908db07f.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/214a35a18c6c96c556c61f87908db07f.jpg'
     },
     {
       name: 'Michael Chen',
@@ -174,8 +172,7 @@ const App = () => {
       content:
         'Outstanding service and technical expertise. The team at Nexa Tech delivered our project on time and exceeded our expectations.',
       rating: 5,
-      image:
-        'https://public.readdy.ai/ai/img_res/3daf301d2a594710f5904775ecef8b45.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/3daf301d2a594710f5904775ecef8b45.jpg'
     },
     {
       name: 'Sarah Williams',
@@ -183,10 +180,15 @@ const App = () => {
       content:
         'The maintenance service is exceptional. They are always available and quick to resolve any issues we encounter.',
       rating: 5,
-      image:
-        'https://public.readdy.ai/ai/img_res/87acda914a08f383ae495000e2caf999.jpg'
+      image: 'https://public.readdy.ai/ai/img_res/87acda914a08f383ae495000e2caf999.jpg'
     }
   ];
+
+  // Function to open the service details modal
+  const openServiceModal = (service) => {
+    setSelectedService(service);
+    setServiceModalVisible(true);
+  };
 
   return (
     <div className="min-h-screen font-sans">
@@ -195,7 +197,7 @@ const App = () => {
       <header className="fixed top-0 left-0 right-0 bg-white shadow z-50">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center">
-            <img src={logWithText} alt="logo" width='30%' />
+            <img src={logWithText} alt="logo" width="30%" />
           </div>
           <nav className="hidden md:flex space-x-8">
             <a
@@ -384,9 +386,14 @@ const App = () => {
                   </div>
                   <h3 className="text-xl font-bold mb-2">{service.title}</h3>
                   <p className="text-gray-600 mb-4">{service.description}</p>
-                  <a href="#" className="text-purple-600 hover:underline font-medium">
+                  {/* Replace the anchor with a button that opens the service modal */}
+                  <Button 
+                    type="link" 
+                    onClick={() => openServiceModal(service)}
+                    className="p-0"
+                  >
                     Learn More
-                  </a>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -773,6 +780,28 @@ const App = () => {
             </Form.Item>
           </Form>
         </div>
+      </Modal>
+
+      {/* Service Details Modal */}
+      <Modal
+        title={selectedService ? selectedService.title : ''}
+        visible={serviceModalVisible}
+        onCancel={() => setServiceModalVisible(false)}
+        footer={null}
+        centered
+        className="rounded-lg overflow-hidden"
+      >
+        {selectedService && (
+          <div>
+            <img
+              src={selectedService.image}
+              alt={selectedService.title}
+              className="w-full h-64 object-cover mb-4"
+            />
+            <p className="mb-4">{selectedService.description}</p>
+            <p>{selectedService.details}</p>
+          </div>
+        )}
       </Modal>
     </div>
   );
