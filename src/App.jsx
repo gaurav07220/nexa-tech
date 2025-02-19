@@ -9,7 +9,10 @@ import {
   LinkedinFilled,
   TwitchFilled,
   FacebookFilled,
-  InstagramFilled
+  InstagramFilled,
+  MenuOutlined,
+  RocketFilled,
+  RocketOutlined
 } from '@ant-design/icons';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -34,23 +37,20 @@ const App = () => {
     form.resetFields();
   };
 
+  const [loading,setLoading] = useState(false)
   const handleScheduleFinish = (values) => {
-    const formattedDate = values.date ? values.date.format('YYYY-MM-DD') : '';
-
+setLoading(true)
     const adminTemplateParams = {
       name: values.name,
       email: values.email,
       phone: values.phone || '',
-      date: formattedDate,
-      time: values.time,
       message: values.message || '',
     };
 
     const userTemplateParams = {
       name: values.name,
       email: values.email,
-      date: formattedDate,
-      time: values.time,
+     
     };
 
     // Send email to admin
@@ -70,9 +70,11 @@ const App = () => {
       )
       .then(() => {
         messageApi.success('Your consultation is scheduled, and confirmation email sent!');
+        setLoading(false)
       })
       .catch(() => {
         messageApi.error('Failed to send confirmation email to user.');
+        setLoading(false)
       });
 
       setScheduleModalVisible(false);
@@ -80,6 +82,7 @@ const App = () => {
     })
     .catch(() => {
       messageApi.error('Failed to schedule consultation. Please try again.');
+      setLoading(false)
     });
   };
 
@@ -226,18 +229,13 @@ const App = () => {
             </a>
           </nav>
           <div className="flex items-center space-x-4">
-            <Button
-              type="primary"
-              size="large"
-              className="rounded-lg bg-purple-600 hover:bg-purple-700 hidden md:block"
-            >
-              Get Started
-            </Button>
+           
             <button
               className="md:hidden text-gray-700"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <i className="fas fa-bars text-2xl"></i>
+              
+              <MenuOutlined/>
             </button>
           </div>
         </div>
@@ -274,13 +272,7 @@ const App = () => {
               >
                 Contact
               </a>
-              <Button
-                type="primary"
-                size="large"
-                className="rounded-lg bg-purple-600 hover:bg-purple-700 w-full"
-              >
-                Get Started
-              </Button>
+              
             </nav>
           </div>
         )}
@@ -314,21 +306,15 @@ const App = () => {
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button
                   type="primary"
+                 
                   size="large"
                   className="rounded-lg bg-white text-purple-600 hover:bg-gray-100 transition-colors w-full sm:w-auto"
                 >
-                  <i className="fas fa-rocket mr-2"></i>
-                  Our Services
+                  <RocketOutlined/>
+                
+                 <a href="#services"> Our Services</a>
                 </Button>
-                <Button
-                  type="default"
-                  size="large"
-                  onClick={() => setScheduleModalVisible(true)}
-                  className="rounded-lg border-white text-white hover:bg-white hover:text-purple-600 transition-colors w-full sm:w-auto"
-                >
-                  <i className="fas fa-calendar-alt mr-2"></i>
-                  Schedule Consultation
-                </Button>
+                
               </div>
               <div className="mt-8 flex items-center space-x-4">
                 <div className="flex -space-x-2">
@@ -525,7 +511,7 @@ const App = () => {
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white p-8 rounded-lg shadow">
-              <Form form={form} onFinish={onFinish} layout="vertical">
+              <Form form={form} onFinish={handleScheduleFinish} layout="vertical">
                 <Form.Item
                   name="name"
                   rules={[{ required: true, message: 'Please enter your name' }]}
@@ -541,18 +527,7 @@ const App = () => {
                 <Form.Item name="phone">
                   <Input size="large" placeholder="Your Phone" />
                 </Form.Item>
-                <Form.Item
-                  name="service"
-                  rules={[{ required: true, message: 'Please select a service' }]}
-                >
-                  <Select size="large" placeholder="Select Service">
-                    {services.map((service, index) => (
-                      <Select.Option key={index} value={service.title}>
-                        {service.title}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+               
                 <Form.Item
                   name="message"
                   rules={[{ required: true, message: 'Please enter your message' }]}
@@ -561,6 +536,7 @@ const App = () => {
                 </Form.Item>
                 <Form.Item>
                   <Button
+                  loading={loading}
                     type="primary"
                     htmlType="submit"
                     size="large"
